@@ -1,6 +1,6 @@
 import React from 'react';
-import Editor, { SimpleToolbar } from './Editor';
-import EditorComponent from './Editor';
+import Editor from './Editor';
+// import EditorComponent from './Editor';
 
 const AddProduct = () => {
     return (
@@ -12,7 +12,7 @@ const AddProduct = () => {
                         <input placeholder='Product Name' type="text" className='input input-bordered w-full  focus:outline-0' />
 
                        {/* <EditorComponent/> */}
-                       <SimpleToolbar/>
+                       <Editor/>
 
                     </div>
                 </div>
