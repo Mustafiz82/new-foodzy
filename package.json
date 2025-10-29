@@ -20,6 +20,7 @@
     "@tiptap/starter-kit": "^3.7.2",
     "axios": "^1.12.2",
     "firebase": "^12.2.1",
+    "jodit-react": "^5.2.31",
     "lexical": "^0.37.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

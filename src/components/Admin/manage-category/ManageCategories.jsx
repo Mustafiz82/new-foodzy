@@ -2,10 +2,11 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router";
+import { ImCross } from "react-icons/im";
 
 const ManageCategories = () => {
   const [data, setData] = useState([]);
-  const [refetch , setRefetch] = useState(false)
+  const [refetch, setRefetch] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,24 +18,37 @@ const ManageCategories = () => {
 
     try {
       const response = await axios.post("http://localhost:3000/category", obj);
-  
 
       console.log(response);
-      setRefetch(!refetch)
-
-      
+      setRefetch(!refetch);
+      document.getElementById("my_modal_2").close() 
     } catch (error) {
       console.log(error);
     }
   };
-console.log(refetch);
+
+  console.log(refetch);
   useEffect(() => {
     axios
       .get("http://localhost:3000/category")
       .then((res) => setData(res.data));
   }, [refetch]);
 
+  const handleRemoveCategory =async (item) => {
+    console.log("object");
 
+    try {
+      const response = await axios.delete(`http://localhost:3000/category/${item._id}`);
+
+     console.log(response?.data);
+      if(response?.data?.acknowledged){
+        setRefetch(!refetch)
+        
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="p-5">
@@ -49,16 +63,22 @@ console.log(refetch);
         </button>
       </div>
 
+      <div className="grid gap-5 mt-10 grid-cols-8">
+        {data?.map((item) => (
+          <div className="border relative border-black p-5 ">
+         <div className="h-[150px] flex items-center">   <img className="w-full " src={item?.image} alt="" /></div>
 
+            <h2 className="text-xl line-clamp-2 text-center font-semibold">{item.name}</h2>
 
-    <div className="grid gap-5 mt-10 grid-cols-8">
-          {data?.map((item) => <div className="border border-black p-5 ">
-            <img className="w-full h-" src={item?.image} alt="" />
-
-            <h2 className="text-xl text-center font-semibold">{item.name}</h2>
-
-      </div> )}
-    </div>
+            <p
+              onClick={() => handleRemoveCategory(item)}
+              className="text-red-500 cursor-pointer absolute top-2 right-2"
+            >
+              <ImCross />{" "}
+            </p>
+          </div>
+        ))}
+      </div>
 
       {/* Open the modal using document.getElementById('ID').showModal() method */}
 
