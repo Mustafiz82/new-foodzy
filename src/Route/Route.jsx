@@ -18,6 +18,7 @@ import Overview from "../components/Admin/Overview/Overview";
 import ManageProduct from "../components/Admin/manageProducts/ManageProduct";
 import ManageCategories from "../components/Admin/manage-category/ManageCategories";
 import AddProduct from "../components/Admin/add-product/AddProduct";
+import EditProduct from "../components/Admin/add-product/EditProduct";
 
 const router = createBrowserRouter([
   {
@@ -94,6 +95,10 @@ const router = createBrowserRouter([
       {
         path : "/admin/manage-products/add",
         element : <AddProduct/>
+      },
+      {
+        path : "/admin/manage-products/edit/:id",
+        element : <EditProduct/>
       },
       {
         path : "/admin/manage-categories",

@@ -3,20 +3,35 @@ import Editor from "./Editor";
 import axios from "axios";
 import { FaPlus } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
+import { useParams } from "react-router";
 // import EditorComponent from './Editor';
 
-const AddProduct = () => {
+const EditProduct = () => {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState([]);
+  const [product, setProduct] = useState([]);
   const [files, setFiles] = useState(null);
   const [urls, setUrls] = useState([]);
   const [loading, setLoading] = useState(null);
+  const { id } = useParams();
+
+  console.log(id);
 
   useEffect(() => {
     axios
       .get("http://localhost:3000/category")
       .then((res) => setCategory(res.data));
   }, []);
+
+  useEffect(() => {
+    axios.get(`http://localhost:3000/product/${id}`).then((res) => {
+      setProduct(res.data);
+      setContent(res.data.description);
+      setUrls(res.data.imageUrls);
+    });
+  }, []);
+
+  console.log(product);
 
   console.log(category);
 
@@ -25,8 +40,11 @@ const AddProduct = () => {
     const filesArray = Array.from(files);
     setFiles(filesArray);
 
-    const urls = filesArray.map((file) => URL.createObjectURL(file));
-    setUrls(urls);
+    const urlsVariable = [
+      ...urls,
+      ...filesArray.map((file) => URL.createObjectURL(file)),
+    ];
+    setUrls(urlsVariable);
   };
 
   const handleRemoveImage = (index) => {
@@ -67,7 +85,7 @@ const AddProduct = () => {
     return imageUrls;
   };
 
-  const handleSubmit = async (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
 
     const title = e.target.title.value;
@@ -75,42 +93,68 @@ const AddProduct = () => {
     const originalPrice = e.target.original_price.value;
     const offeredPrice = e.target.offered_price.value;
     const category = e.target.category.value;
-    const imageUrls = await uploadImage();
+    // const imageUrls = await uploadImage();
 
     console.log({ title, description, originalPrice, offeredPrice, category });
 
-    // console.log(imageUrls);
+    const urlToUpload = [];
+    const cloudinaryUpload = []
 
-    setLoading("Adding Product...");
-
-    const payload = {title, description, originalPrice, offeredPrice, category , imageUrls}
-
-    try {
-      const result = await axios.post("http://localhost:3000/product" , payload);
-      console.log(result.data);
-    } catch (error) {
-      console.log(error.message);
-    } finally {
-      setLoading(null);
-      e.target.reset()
-      setContent(null)
-      setFiles([])
-      setUrls([])
+    for (let items of urls) {
+      if (items.startsWith("blob:")) {
+        urlToUpload.push(items);
+      } else {
+        // newUrls.push(items);
+        console.log("somethingt");
+        cloudinaryUpload.push(items)
+      }
     }
 
+    console.log(urlToUpload);
+    console.log(urls);
+    console.log(files);
 
+    const imageUrls = await uploadImage();
+    const allDeployedUrl = [...cloudinaryUpload , ...imageUrls]
+    console.log(allDeployedUrl);
+    // console.log(imageUrls);
+
+    // setLoading("Adding Product...");
+
+    // const payload = {
+    //   title,
+    //   description,
+    //   originalPrice,
+    //   offeredPrice,
+    //   category,
+    //   imageUrls,
+    // };
+
+    // try {
+    //   const result = await axios.post("http://localhost:3000/product", payload);
+    //   console.log(result.data);
+    // } catch (error) {
+    //   console.log(error.message);
+    // } finally {
+    //   setLoading(null);
+    //   e.target.reset();
+    //   setContent(null);
+    //   setFiles([]);
+    //   setUrls([]);
+    // }
   };
 
   return (
     <div className="p-5">
-      <h2 className="text-xl font-semibold">Add New Product</h2>
-      <form onSubmit={handleSubmit}>
+      <h2 className="text-xl font-semibold">Edit Product</h2>
+      <form onSubmit={handleUpdate}>
         <div className="flex w-full justify-between gap-5 ">
           <div className="mt-5 flex-2">
             <input
               placeholder="Product Name"
               type="text"
               name="title"
+              defaultValue={product.title}
               className="input input-bordered w-full  focus:outline-0"
             />
 
@@ -121,12 +165,14 @@ const AddProduct = () => {
               <input
                 type="number"
                 name="original_price"
+                defaultValue={product.originalPrice}
                 placeholder="Original Price in taka"
                 className="input input-bordered w-full focus:outline-0"
               />
               <input
                 type="number"
                 name="offered_price"
+                defaultValue={product.offeredPrice}
                 placeholder="Offered Price in taka"
                 className="input input-bordered w-full focus:outline-0"
               />
@@ -134,13 +180,15 @@ const AddProduct = () => {
 
             <select
               name="category"
-              defaultValue="Pick a color"
+              defaultValue={product.category || "Pick a Category"}
               className="select focus:outline-0 w-full mt-5"
             >
               <option disabled={true}>Pick a Category</option>
 
               {category?.map((item) => (
-                <option>{item.name}</option>
+                <option selected={product.category === item.name}>
+                  {item.name}
+                </option>
               ))}
             </select>
           </div>
@@ -177,7 +225,7 @@ const AddProduct = () => {
 
               <div className="flex justify-end">
                 <button type="submit" className="btn btn-primary ">
-                  {loading ? loading : "Submit"}
+                  {loading ? loading : "Update"}
                 </button>
               </div>
             </div>
@@ -188,4 +236,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;
