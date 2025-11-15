@@ -4,12 +4,13 @@ import { LuLayoutList } from "react-icons/lu";
 import { MdOutlineGridOn, MdOutlineKeyboardArrowDown } from "react-icons/md";
 import RangeSlider from "react-range-slider-input";
 import "react-range-slider-input/dist/style.css";
-import { ProductData } from "../../Data/PopularProductData";
 import ProductCard from "../Shared/ProductCard";
+import useFetch from "../../hook/useFetch";
 
 const Product = () => {
   const [isFilterOpen, setFilterOpen] = useState(false);
   const [viewMode, setViewMode] = useState("grid");
+  const {data:ProductData} = useFetch("product")
 
   console.log(viewMode);
 
@@ -65,6 +66,8 @@ const Product = () => {
 
     "Juice",
   ];
+
+
   return (
     <div className="container md:pt-10 lg:pt-20 flex gap-5 w-full items-start  mx-auto px-5 md:px-10 lg:px-10  my-10">
       {/* filter */}

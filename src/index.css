@@ -4,6 +4,8 @@
 
 @plugin "daisyui";
 
+
+
 @theme{
   --color-primary : #F53E32;
   --font-poppins : "poppins" , "sans-serif";
@@ -19,6 +21,11 @@
    name: "dark";
    --color-primary: #F53E32;
  }
+
+
+
+
+
 
 
 .range-slider__thumb  , .range-slider__range{

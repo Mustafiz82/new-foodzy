@@ -1,13 +1,12 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router";
 import { ImCross } from "react-icons/im";
+import useFetch from "../../../hook/useFetch";
 
 const ManageCategories = () => {
-  const [data, setData] = useState([]);
-  const [refetch, setRefetch] = useState(false);
-
+  const { data, refetch } = useFetch("category");
   const handleSubmit = async (e) => {
     e.preventDefault();
     const name = e.target.name.value;
@@ -20,30 +19,26 @@ const ManageCategories = () => {
       const response = await axios.post("http://localhost:3000/category", obj);
 
       console.log(response);
-      setRefetch(!refetch);
-      document.getElementById("my_modal_2").close() 
+      refetch()
+      document.getElementById("my_modal_2").close();
     } catch (error) {
       console.log(error);
     }
   };
 
-  console.log(refetch);
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/category")
-      .then((res) => setData(res.data));
-  }, [refetch]);
+  
 
-  const handleRemoveCategory =async (item) => {
+  const handleRemoveCategory = async (item) => {
     console.log("object");
 
     try {
-      const response = await axios.delete(`http://localhost:3000/category/${item._id}`);
+      const response = await axios.delete(
+        `http://localhost:3000/category/${item._id}`
+      );
 
-     console.log(response?.data);
-      if(response?.data?.acknowledged){
-        setRefetch(!refetch)
-        
+      console.log(response?.data);
+      if (response?.data?.acknowledged) {
+        refetch()
       }
     } catch (error) {
       console.log(error);
@@ -66,9 +61,14 @@ const ManageCategories = () => {
       <div className="grid gap-5 mt-10 grid-cols-8">
         {data?.map((item) => (
           <div className="border relative border-black p-5 ">
-         <div className="h-[150px] flex items-center">   <img className="w-full " src={item?.image} alt="" /></div>
+            <div className="h-[150px] flex items-center">
+              {" "}
+              <img className="w-full " src={item?.image} alt="" />
+            </div>
 
-            <h2 className="text-xl line-clamp-2 text-center font-semibold">{item.name}</h2>
+            <h2 className="text-xl line-clamp-2 text-center font-semibold">
+              {item.name}
+            </h2>
 
             <p
               onClick={() => handleRemoveCategory(item)}

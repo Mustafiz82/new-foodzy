@@ -3,7 +3,7 @@ import Editor from "./Editor";
 import axios from "axios";
 import { FaPlus } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 // import EditorComponent from './Editor';
 
 const EditProduct = () => {
@@ -14,8 +14,9 @@ const EditProduct = () => {
   const [urls, setUrls] = useState([]);
   const [loading, setLoading] = useState(null);
   const { id } = useParams();
+  const navigate = useNavigate();
 
-  console.log(id);
+  // console.log(id);
 
   useEffect(() => {
     axios
@@ -27,29 +28,29 @@ const EditProduct = () => {
     axios.get(`http://localhost:3000/product/${id}`).then((res) => {
       setProduct(res.data);
       setContent(res.data.description);
-      setUrls(res.data.imageUrls);
+      setUrls(res.data.imageUrls || []);
     });
   }, []);
 
-  console.log(product);
+  // console.log(product);
 
-  console.log(category);
+  // console.log(category);
 
   const handleFileChange = (e) => {
     const files = e.target.files;
     const filesArray = Array.from(files);
     setFiles(filesArray);
 
-    const urlsVariable = [
-      ...urls,
-      ...filesArray.map((file) => URL.createObjectURL(file)),
-    ];
+    const blobUrl = filesArray.map((file) => URL.createObjectURL(file));
+
+    const urlsVariable = [...urls, ...blobUrl];
+
     setUrls(urlsVariable);
   };
 
   const handleRemoveImage = (index) => {
-    const newUrl = urls.filter((item, idx) => idx !== index);
-    const newFiles = files.filter((item, idx) => idx !== index);
+    const newUrl = urls?.filter((item, idx) => idx !== index);
+    const newFiles = files?.filter((item, idx) => idx !== index);
     setUrls(newUrl);
     setFiles(newFiles);
   };
@@ -58,27 +59,29 @@ const EditProduct = () => {
     setLoading("Uploading images...");
     const imageUrls = [];
 
-    for (let file of files) {
-      const formData = new FormData();
+    if (files?.length > 0) {
+      for (let file of files) {
+        const formData = new FormData();
 
-      formData.append("file", file);
-      formData.append("upload_preset", "mern_preset");
+        formData.append("file", file);
+        formData.append("upload_preset", "mern_preset");
 
-      try {
-        const result = await axios.post(
-          "https://api.cloudinary.com/v1_1/dssxxoqpd/image/upload",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        try {
+          const result = await axios.post(
+            "https://api.cloudinary.com/v1_1/dssxxoqpd/image/upload",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
 
-        console.log(result.data);
-        imageUrls.push(result.data.url);
-      } catch (error) {
-        console.log(error);
+          console.log(result.data);
+          imageUrls.push(result.data.url);
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
 
@@ -93,55 +96,51 @@ const EditProduct = () => {
     const originalPrice = e.target.original_price.value;
     const offeredPrice = e.target.offered_price.value;
     const category = e.target.category.value;
-    // const imageUrls = await uploadImage();
-
-    console.log({ title, description, originalPrice, offeredPrice, category });
 
     const urlToUpload = [];
-    const cloudinaryUpload = []
+    const cloudinaryUpload = [];
+
+    console.log(urls);
 
     for (let items of urls) {
       if (items.startsWith("blob:")) {
         urlToUpload.push(items);
       } else {
-        // newUrls.push(items);
-        console.log("somethingt");
-        cloudinaryUpload.push(items)
+        cloudinaryUpload.push(items);
       }
     }
 
-    console.log(urlToUpload);
-    console.log(urls);
-    console.log(files);
-
     const imageUrls = await uploadImage();
-    const allDeployedUrl = [...cloudinaryUpload , ...imageUrls]
+    const allDeployedUrl = [...cloudinaryUpload, ...imageUrls];
     console.log(allDeployedUrl);
-    // console.log(imageUrls);
 
-    // setLoading("Adding Product...");
+    setLoading("updating Product...");
 
-    // const payload = {
-    //   title,
-    //   description,
-    //   originalPrice,
-    //   offeredPrice,
-    //   category,
-    //   imageUrls,
-    // };
+    const payload = {
+      title,
+      description,
+      originalPrice,
+      offeredPrice,
+      category,
+      imageUrls: allDeployedUrl,
+    };
 
-    // try {
-    //   const result = await axios.post("http://localhost:3000/product", payload);
-    //   console.log(result.data);
-    // } catch (error) {
-    //   console.log(error.message);
-    // } finally {
-    //   setLoading(null);
-    //   e.target.reset();
-    //   setContent(null);
-    //   setFiles([]);
-    //   setUrls([]);
-    // }
+    try {
+      const result = await axios.put(
+        `http://localhost:3000/product/${id}`,
+        payload
+      );
+      console.log(result.data);
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setLoading(null);
+      navigate(-1);
+      // e.target.reset();
+      // setContent(null);
+      // setFiles([]);
+      // setUrls([]);
+    }
   };
 
   return (
@@ -212,7 +211,7 @@ const EditProduct = () => {
               />
 
               <div className="grid h-[400px] overflow-y-auto gap-3  items-start content-start mt-5 grid-cols-3">
-                {urls.map((url, index) => (
+                {urls?.map((url, index) => (
                   <div className="relative">
                     <img src={url} alt="" />
                     <ImCross

@@ -1,12 +1,15 @@
 import React from "react";
 import { FaArrowRight } from "react-icons/fa";
 import prouductBannerImage from "../../assets/home/product-banner-img.png";
-import { ProductData } from "../../Data/PopularProductData";
+
 import Title from "../Shared/Title";
 import ProductCard from "../Shared/ProductCard";
+import useFetch from "../../hook/useFetch";
 
 const PopularProduct = () => {
   const category = ["All", "Snack", "Vegetable", "Fruit", "Bakery"];
+
+  const {data:ProductData} = useFetch("product")
 
   return (
     <div className="container px-10 mx-auto">
@@ -16,6 +19,7 @@ const PopularProduct = () => {
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore lacus vel facilisis."
         }
       />
+
 
       <div className="grid mt-10 grid-cols-1 lg:grid-cols-4 gap-y-5 lg:gap-5 ">
         <div className="space-y-2  flex lg:flex-col flex-row gap-5 w-full text-center">
@@ -47,7 +51,7 @@ const PopularProduct = () => {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 col-span-3 gap-5">
-          {ProductData.map((item, idx) => (
+          {ProductData.slice(0,6).map((item, idx) => (
             <ProductCard key={idx} item={item} />
           ))}
         </div>

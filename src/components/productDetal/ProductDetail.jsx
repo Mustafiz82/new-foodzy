@@ -1,71 +1,94 @@
-import React, { useContext, useState } from "react";
-import image from "../../assets/home/product2.png";
-import product1 from "../../assets/product/product1.png";
-import product2 from "../../assets/product//product2.png";
-import product3 from "../../assets/product/product3png.png";
+import React, { useContext, useEffect, useState } from "react";
+
 import Rating from "react-rating";
 import { GoStar, GoStarFill } from "react-icons/go";
 import Title from "../Shared/Title";
 import ProductCard from "../Shared/ProductCard";
-import { ProductData } from "../../Data/PopularProductData";
 import { AuthContext } from "../../context/Authcontext";
+import useFetch from "../../hook/useFetch";
+import { useNavigate, useParams } from "react-router";
+import axiosPublic from "../../config/axiosPublic";
+import Swal from "sweetalert2";
 
 const ProductDetail = () => {
-  const [selectedImage, setSelectedImage] = useState(image);
+  const { id } = useParams();
+  const { data: productDetail, refetch } = useFetch(`product/${id}`);
+  const [selectedImage, setSelectedImage] = useState(
+    productDetail?.imageUrls?.[0]
+  );
   const [selectedTab, setSelectedTab] = useState("description");
+  const [quantity, setQuantity] = useState(1);
 
+  const navigate = useNavigate();
+  const { data: ProductData } = useFetch("product");
+  const { user } = useContext(AuthContext);
+  console.log(user);
 
-  const value = useContext(AuthContext)
+  useEffect(() => {
+    setSelectedImage(productDetail?.imageUrls?.[0]);
+  }, [productDetail]);
+
+  useEffect(() => {
+    refetch();
+  }, [id]);
+
+  const handleChangeQuantity = (delta) => {
+    setQuantity(
+      delta == "+" ? quantity + 1 : quantity > 1 ? quantity - 1 : quantity - 0
+    );
+  };
+
+  const handleAddToCart = () => {
+    if (user?.email) {
+      const { _id, ...rest } = productDetail;
+      console.log(rest);
+
+      axiosPublic
+        .post("/cart", { quantity, ...rest, email: user.email })
+        .then((res) => {
+          // if(res.data)
+          if (res.data.insertedId) {
+            Swal.fire({
+              title: "Success",
+              text: "Product Added To cart !",
+              icon: "success",
+              footer: '<a href="/cart">view Cart</a>',
+            });
+          }
+        });
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const value = useContext(AuthContext);
   console.log(value);
 
   return (
     <div className="container mx-auto">
       <div className="w-full my-20 flex flex-col lg:flex-row gap-5">
         <div className="flex-1">
-          <img className=" w-full " src={selectedImage} alt="" />
+          <img
+            className=" w-full object-cover h-[600px]"
+            src={selectedImage}
+            alt=""
+          />
           <div className="flex w-screen lg:w-auto overflow-x-auto gap-5 mt-5">
-            <img
-              onClick={() => setSelectedImage(product1)}
-              className="w-32"
-              src={product1}
-              alt=""
-            />
-            <img
-              onClick={() => setSelectedImage(product2)}
-              className="w-32"
-              src={product2}
-              alt=""
-            />
-            <img
-              onClick={() => setSelectedImage(product3)}
-              className="w-32"
-              src={product3}
-              alt=""
-            />
-            <img
-              onClick={() => setSelectedImage(product1)}
-              className="w-32"
-              src={product1}
-              alt=""
-            />
-            <img
-              onClick={() => setSelectedImage(product2)}
-              className="w-32"
-              src={product2}
-              alt=""
-            />
+            {productDetail?.imageUrls?.map((item) => (
+              <img
+                onClick={() => setSelectedImage(item)}
+                className="w-32 h-32 object-cover"
+                src={item}
+                alt=""
+              />
+            ))}
           </div>
         </div>
 
         <div className="flex-1 p-4">
-          <h1 className="text-3xl ">Seeds Of Change Oraganic Quinoa, Brown</h1>
+          <h1 className="text-3xl ">{productDetail.title}</h1>
 
-          <p className="text-lg mt-4">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ullam
-            adipisci delectus neque illum quia ratione nemo voluptates provident
-            quaerat impedit quibusdam iste modi saepe, cumque laborum sunt atque
-            veniam ipsa.
-          </p>
+          <p className="mt-3">{productDetail?.shortDescription}</p>
 
           <hr className="my-10" />
 
@@ -80,72 +103,46 @@ const ProductDetail = () => {
             <span className="text-black/70">(75 Review)</span>
           </div>
 
-          <h2 className="mt-4">
-            {" "}
-            <span className="font-semibold">Brand :</span> ESTA BETTERU CO
-          </h2>
-          <h2 className="mt-4">
-            {" "}
-            <span className="font-semibold">Flavour :</span> ESTA BETTERU CO
-          </h2>
-          <h2 className="mt-4">
-            {" "}
-            <span className="font-semibold">Diet Type :</span> ESTA BETTERU CO
-          </h2>
-          <h2 className="mt-4">
-            {" "}
-            <span className="font-semibold">Weight :</span> ESTA BETTERU CO
-          </h2>
-          <h2 className="mt-4">
-            {" "}
-            <span className="font-semibold">Speciality :</span> ESTA BETTERU CO
-          </h2>
-          <h2 className="mt-4">
-            {" "}
-            <span className="font-semibold">Info :</span> ESTA BETTERU CO
-          </h2>
-          <h2 className="mt-4">
-            {" "}
-            <span className="font-semibold">Items :</span> ESTA BETTERU CO
-          </h2>
+          <div
+            className="text-lg mt-4"
+            dangerouslySetInnerHTML={{ __html: productDetail.description }}
+          ></div>
 
           <div className="flex gap-2 items-end">
             <h1 className="text-primary mt-5 text-3xl font-semibold">
-              $120.25
+              ${productDetail.offeredPrice}
             </h1>
-            <del className="text-black/70 text-2xl ">$200</del>
-          </div>
-
-          <div className="flex flex-col md:flex-row mt-5  gap-5">
-            <h1 className="text-2xl font-semibold ">Size/Weight :</h1>
-            <div className="space-x-2">
-              <button className="btn btn-primary rounded-lg bg-primary text-white">
-                50kg
-              </button>
-              <button className="btn btn-outline rounded-lg text-primary ">
-                80kg
-              </button>
-              <button className="btn btn-outline rounded-lg text-primary">
-                120Kg
-              </button>
-              <button className="btn btn-outline rounded-lg text-primary">
-                200kg
-              </button>
-            </div>
+            <del className="text-black/70 text-2xl ">
+              {" "}
+              ${productDetail.originalPrice}
+            </del>
           </div>
 
           <div className="flex my-5 gap-5">
             <div className="flex gap-1 items-center ">
-              <span className="btn btn-outline btn-xl text-black/70">1</span>
+              <span className="btn btn-outline btn-xl text-black/70">
+                {quantity}
+              </span>
               <div className="flex flex-col w-fit">
-                <span className="btn  btn-sm btn-outline  text-black/70">
+                <span
+                  onClick={() => handleChangeQuantity("+")}
+                  className="btn  btn-sm btn-outline  text-black/70"
+                >
                   +
                 </span>
-                <span className="btn btn-sm btn-outline  text-black/70">-</span>
+                <span
+                  onClick={() => handleChangeQuantity("-")}
+                  className="btn btn-sm btn-outline  text-black/70"
+                >
+                  -
+                </span>
               </div>
             </div>
 
-            <button className="btn btn-primary  text-2xl px-8 py-8 text-white">
+            <button
+              onClick={handleAddToCart}
+              className="btn btn-primary  text-2xl px-8 py-8 text-white"
+            >
               Add To Cart
             </button>
           </div>

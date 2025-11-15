@@ -7,14 +7,14 @@ import { Link } from "react-router";
 
 const ProductCard = ({ item, viewMode }) => {
   return (
-    <Link to={"/product/1"}>
+    <Link to={`/product/${item._id}`}>
       <div
-        className={`p-4 flex  ${
+        className={`p-4 flex h-fit ${
           viewMode == "list" ? "flex-col md:flex-row" : "flex-col"
         } border-[#E9E9E9] border `}
       >
         <div className="relative">
-          <img className="w-full" src={item?.image} alt="" />
+          <img className={`w-full h-[300px]  object-cover ${viewMode !== "grid" && "!w-[300px]"}`} src={item.imageUrls?.[0]} alt="" />
           {viewMode == "grid" && (
           <div className="absolute p-2 rounded-full -bottom-3 left-1/2 text-primary -translate-x-1/2 bg-[#E9E9E9]">
               <BsBagDash />
@@ -44,7 +44,7 @@ const ProductCard = ({ item, viewMode }) => {
           </div>
 
           <h2 className="text-2xl font-medium font-poppins">
-            Fresh organic villa farm lomon 500gm pack
+            {item.title}
           </h2>
 
           <div
@@ -54,8 +54,8 @@ const ProductCard = ({ item, viewMode }) => {
                 : "justify-center"
             } justify-center items-center gap-3 `}
           >
-            <span className="font-bold text-primary text-[28px]"> $120.25</span>
-            <del className=" text-black/70 text-xl "> $120.25</del>
+            <span className="font-bold text-primary text-[28px]"> ${item.offeredPrice}</span>
+            <del className=" text-black/70 text-xl "> ${item.originalPrice}</del>
           </div>
 
           {viewMode == "list" && (

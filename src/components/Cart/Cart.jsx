@@ -1,9 +1,22 @@
 import { Link } from "react-router";
 import Title from "../Shared/Title";
-import { ProductData } from "../../Data/PopularProductData";
 import CartItem from "./CartItem";
 import ProductCard from "../Shared/ProductCard";
+import useFetch from "../../hook/useFetch";
+import { useContext, useEffect } from "react";
+import { AuthContext } from "../../context/Authcontext";
 const Cart = () => {
+
+  const {user} = useContext(AuthContext)
+  const {data : ProductData} = useFetch("product")
+  const {data : cart , refetch} = useFetch(`cart/${user?.email}`)
+
+
+  useEffect(() => {
+    refetch()
+  } , [user])
+
+  console.log(cart);
   return (
     <div className="container mx-auto p-5 ">
       <div className="overflow-x-auto ">
@@ -20,8 +33,8 @@ const Cart = () => {
           </thead>
           <tbody>
             {/* row 1 */}
-            {ProductData.map((item, index) => (
-              <CartItem key={index} item={item} />
+            {cart.map((item, index) => (
+              <CartItem refetch={refetch} key={index} item={item} />
             ))}
             {/* row 2 */}
           </tbody>

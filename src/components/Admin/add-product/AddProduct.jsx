@@ -71,6 +71,7 @@ const AddProduct = () => {
     e.preventDefault();
 
     const title = e.target.title.value;
+    const shortDescription = e.target.shortDescription.value;
     const description = content;
     const originalPrice = e.target.original_price.value;
     const offeredPrice = e.target.offered_price.value;
@@ -83,7 +84,7 @@ const AddProduct = () => {
 
     setLoading("Adding Product...");
 
-    const payload = {title, description, originalPrice, offeredPrice, category , imageUrls}
+    const payload = {title, description, shortDescription ,originalPrice, offeredPrice, category , imageUrls}
 
     try {
       const result = await axios.post("http://localhost:3000/product" , payload);
@@ -113,6 +114,16 @@ const AddProduct = () => {
               name="title"
               className="input input-bordered w-full  focus:outline-0"
             />
+
+
+            <textarea
+              placeholder="Short Description"
+              type="text"
+              name="shortDescription"
+              className="input h-28 py-2 resize-none text-wrap  mt-5 input-bordered w-full  focus:outline-0"
+            />
+
+
 
             {/* <EditorComponent/> */}
             <Editor content={content} setContent={setContent} />
