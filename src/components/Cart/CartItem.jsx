@@ -7,6 +7,8 @@ import Swal from "sweetalert2";
 const CartItem = ({ item, refetch }) => {
   const [quantity, setQuantity] = useState(item?.quantity);
 
+  console.log(item);
+
   const handleChangeQuantity = (delta) => {
     delta == "+"
       ? setQuantity((prev) => prev + 1)
@@ -45,12 +47,12 @@ const CartItem = ({ item, refetch }) => {
       <th className="flex gap-2 items-center">
         <img
           className="w-16 h-16 object-cover"
-          src={item.imageUrls[0]}
+          src={item.productDetails.imageUrls[0]}
           alt=""
         />
-        <p className="text-black/60">{item.name}</p>
+        <p className="text-black/60">{item.productDetails.title}</p>
       </th>
-      <td>${item.offeredPrice}</td>
+      <td>${item.productDetails.offeredPrice}</td>
       <td>
         <div className="join">
           <button
@@ -68,7 +70,7 @@ const CartItem = ({ item, refetch }) => {
           </button>
         </div>
       </td>
-      <td>${(quantity * item.offeredPrice).toFixed(2)}</td>
+      <td>${(quantity * item.productDetails.offeredPrice).toFixed(2)}</td>
       <td className="text-right min-h-full items-center ">
         <div className="flex justify-end">
           <RiDeleteBin6Line className="cursor-pointer" onClick={() => handleDelete(item._id)} />

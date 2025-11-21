@@ -44,7 +44,7 @@ const ProductDetail = () => {
       console.log(rest);
 
       axiosPublic
-        .post("/cart", { quantity, ...rest, email: user.email })
+        .post("/cart", { quantity, productID : _id, email: user.email })
         .then((res) => {
           // if(res.data)
           if (res.data.insertedId) {

@@ -1,8 +1,29 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ProductData } from "../../Data/PopularProductData";
 import CheckoutCard from "./CheckoutCard";
+import useFetch from "../../hook/useFetch";
+import { AuthContext } from "../../context/Authcontext";
+import { useForm } from "react-hook-form";
 
 const Checkout = () => {
+  const { user } = useContext(AuthContext);
+  const { data: cartData, refetch } = useFetch(`cart/${user.email}`);
+
+  console.log(cartData);
+
+  useEffect(() => {
+    refetch();
+  }, [user]);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => console.log(data);
+  
+
   return (
     <div className="flex flex-col  lg:flex-row container mx-auto p-5 w-full gap-5">
       <div className="flex flex-col md:flex-row lg:flex-col gap-3 w-full lg:w-1/3  ">
@@ -25,7 +46,7 @@ const Checkout = () => {
           </div>
 
           <div className="space-y-3 mt-5">
-            {ProductData?.slice(0, 2)?.map((item, index) => (
+            {cartData?.slice(0, 2)?.map((item, index) => (
               <CheckoutCard key={index} item={item} />
             ))}
           </div>
@@ -63,7 +84,7 @@ const Checkout = () => {
           </div>
         </div>
       </div>
-      <div className=" w-full lg:w-2/3 space-y-4 border border-black/60 p-5 ">
+      <form onSubmit={handleSubmit(onSubmit)} className=" w-full lg:w-2/3 space-y-4 border border-black/60 p-5 ">
         <h2 className="text-xl font-semibold">Billing Information</h2>
 
         <div className="flex-1">
@@ -75,6 +96,7 @@ const Checkout = () => {
             id="first_name"
             type="text"
             className="input mt-2 focus:outline-0 w-full focus:border-2 focus:border-primary  input-border"
+            {...register("first_name" , { required: true })} 
           />
         </div>
         <div className="flex-1">
@@ -84,6 +106,7 @@ const Checkout = () => {
             id="last_name"
             type="text"
             className="input mt-2 focus:outline-0 w-full focus:border-2 focus:border-primary  input-border"
+             {...register("last_name")} 
           />
         </div>
 
@@ -96,6 +119,7 @@ const Checkout = () => {
             id="address"
             type="text"
             className="input mt-2 focus:outline-0 w-full  focus:border-2 focus:border-primary  input-border"
+             {...register("address")} 
           />
         </div>
         <div className="flex-1">
@@ -105,15 +129,17 @@ const Checkout = () => {
             id="city"
             type="text"
             className="input mt-2 focus:outline-0 w-full focus:border-2 focus:border-primary  input-border"
+             {...register("city")} 
           />
         </div>
         <div className="flex-1">
           <label htmlFor="city">Post Code </label>
           <input
             placeholder="Enter Your City Name"
-            id="city"
+            id="postCode"
             type="text"
             className="input mt-2 focus:outline-0 w-full focus:border-2 focus:border-primary  input-border"
+             {...register("post_code")} 
           />
         </div>
         <div className="flex-1">
@@ -123,15 +149,16 @@ const Checkout = () => {
             id="country"
             type="text"
             className="input mt-2 focus:outline-0 w-full focus:border-2 focus:border-primary  input-border"
+             {...register("country")} 
           />
         </div>
 
         <div className="flex justify-end mt-8">
-          <button className="btn ml-auto btn-primary bg-primary  text-white">
+          <button type="submit" className="btn ml-auto btn-primary bg-primary  text-white">
             Place Order
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
