@@ -5,18 +5,46 @@ import ProductCard from "../Shared/ProductCard";
 import useFetch from "../../hook/useFetch";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../../context/Authcontext";
+import { CartContext } from "../../context/CartContext";
+import { MdDelete } from "react-icons/md";
+import axiosPublic from "../../config/axiosPublic";
+import Swal from "sweetalert2";
 const Cart = () => {
 
-  const {user} = useContext(AuthContext)
-  const {data : ProductData} = useFetch("product")
-  const {data : cart , refetch} = useFetch(`cart/${user?.email}`)
+  const { data: ProductData } = useFetch("product");
 
+  const { cartState, refetch, handleUpdateQuantity } = useContext(CartContext);
 
-  useEffect(() => {
-    refetch()
-  } , [user])
+  const handleDeleteAll = () => {
+    try {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axiosPublic.delete("/cart").then((res) => {
+            if (res?.data?.deletedCount > 0) {
+              refetch();
+              Swal.fire({
+                title: "Deleted!",
+                text: "Your file has been deleted.",
+                icon: "success",
+              });
+            }
+          });
+        }
+      });
+    
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  console.log(cart);
   return (
     <div className="container mx-auto p-5 ">
       <div className="overflow-x-auto ">
@@ -33,8 +61,13 @@ const Cart = () => {
           </thead>
           <tbody>
             {/* row 1 */}
-            {cart.map((item, index) => (
-              <CartItem refetch={refetch} key={index} item={item} />
+            {cartState.map((item, index) => (
+              <CartItem
+                handleUpdateQuantity={handleUpdateQuantity}
+                refetch={refetch}
+                key={index}
+                item={item}
+              />
             ))}
             {/* row 2 */}
           </tbody>
@@ -45,9 +78,17 @@ const Cart = () => {
         <Link className="underline text-black/70" to={"#"}>
           Continue Shopping.
         </Link>
-        <Link to={"/checkout"}>
-          <button className="btn bg-primary text-white">Checkout</button>
-        </Link>
+        <div className="flex gap-5">
+          <button
+            onClick={handleDeleteAll}
+            className="btn bg-red-600 text-white"
+          >
+            <MdDelete /> Clear Cart
+          </button>
+          <Link to={"/checkout"}>
+            <button className="btn bg-primary text-white">Checkout</button>
+          </Link>
+        </div>
       </div>
 
       <Title

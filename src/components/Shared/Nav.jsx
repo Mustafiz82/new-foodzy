@@ -8,14 +8,15 @@ import { Link } from "react-router";
 import { AuthContext } from "../../context/Authcontext";
 import { MdOutlineAccountCircle } from "react-icons/md";
 import useFetch from "../../hook/useFetch";
+import { CartContext } from "../../context/CartContext";
 
 const Nav = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
-  const {data:category , loading } = useFetch("category")
+  const { data: category, loading } = useFetch("category");
 
+  const { cartState } = useContext(CartContext);
 
-
-  console.log(isDropDownOpen);
+  console.log(cartState?.length);
 
   const { user } = useContext(AuthContext);
 
@@ -50,7 +51,10 @@ const Nav = () => {
             }  overflow-auto w-[200px] top-[60px] shadow-sm`}
           >
             {category.map((item, idx) => (
-              <div className="p-4 py-2 hover:bg-black hover:text-white duration-300  bg-white" key={idx}>
+              <div
+                className="p-4 py-2 hover:bg-black hover:text-white duration-300  bg-white"
+                key={idx}
+              >
                 {item.name}
               </div>
             ))}
@@ -63,22 +67,31 @@ const Nav = () => {
 
       <div>
         <ul className="flex  gap-5">
-          {user?.email ? (<>
-            <Link to={"/user"}>
-              <li className="flex items-center gap-2">
-                <MdOutlineAccountCircle  /> Account{" "}
-              </li>
-            </Link>
+          {user?.email ? (
+            <>
+              <Link to={"/user"}>
+                <li className="flex items-center gap-2">
+                  <MdOutlineAccountCircle /> Account{" "}
+                </li>
+              </Link>
+              <Link to={"/wishlist"}>
+                <li className="flex items-center gap-2">
+                  <CiHeart /> WishList{" "}
+                </li>
+              </Link>
+              <Link to={"/cart"}>
+                <li className="flex  items-center gap-2">
+                  <div className="relative">
+                    <IoCartOutline />
 
-            <Link to={"/wishlist"}>
-          <li className="flex items-center gap-2">
-            <CiHeart /> WishList{" "}
-          </li></Link>
-          <Link to={"/cart"}>
-            <li className="flex items-center gap-2">
-              <IoCartOutline /> Cart{" "}
-            </li>
-          </Link> </>
+                    <span className="bg-primary px-1 rounded-full font-semibold absolute -top-2 -right-2 text-white text-[10px]">
+                      {cartState?.length}
+                    </span>
+                  </div>
+                  Cart{" "}
+                </li>
+              </Link>{" "}
+            </>
           ) : (
             <Link to={"/login"}>
               <li className="flex items-center gap-2">
@@ -86,8 +99,6 @@ const Nav = () => {
               </li>
             </Link>
           )}
-
-         
         </ul>
       </div>
     </div>

@@ -4,17 +4,24 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import axiosPublic from "../../config/axiosPublic";
 import Swal from "sweetalert2";
 
-const CartItem = ({ item, refetch }) => {
-  const [quantity, setQuantity] = useState(item?.quantity);
+const CartItem = ({ item, refetch  , handleUpdateQuantity}) => {
+  // const [quantity, setQuantity] = useState(item?.quantity);
 
   console.log(item);
 
+  const quantity = item?.quantity
+
+
+
+
+
+
   const handleChangeQuantity = (delta) => {
     delta == "+"
-      ? setQuantity((prev) => prev + 1)
+      ? handleUpdateQuantity( item._id , quantity + 1)
       : quantity > 1
-      ? setQuantity((prev) => prev - 1)
-      : setQuantity((prev) => prev);
+      ? handleUpdateQuantity(item._id , quantity - 1)
+      : null;
   };
 
   const handleDelete = (id) => {
@@ -61,7 +68,7 @@ const CartItem = ({ item, refetch }) => {
           >
             <FaPlus />
           </button>
-          <button className="btn join-item">{quantity}</button>
+          <button className="btn join-item">{item?.quantity}</button>
           <button
             onClick={() => handleChangeQuantity("-")}
             className="btn join-item"

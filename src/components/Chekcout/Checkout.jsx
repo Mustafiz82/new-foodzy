@@ -4,16 +4,11 @@ import CheckoutCard from "./CheckoutCard";
 import useFetch from "../../hook/useFetch";
 import { AuthContext } from "../../context/Authcontext";
 import { useForm } from "react-hook-form";
+import { CartContext } from "../../context/CartContext";
 
 const Checkout = () => {
-  const { user } = useContext(AuthContext);
-  const { data: cartData, refetch } = useFetch(`cart/${user.email}`);
 
-  console.log(cartData);
-
-  useEffect(() => {
-    refetch();
-  }, [user]);
+  const { cartState, } = useContext(CartContext);
 
   const {
     register,
@@ -22,7 +17,6 @@ const Checkout = () => {
   } = useForm();
 
   const onSubmit = (data) => console.log(data);
-  
 
   return (
     <div className="flex flex-col  lg:flex-row container mx-auto p-5 w-full gap-5">
@@ -46,7 +40,7 @@ const Checkout = () => {
           </div>
 
           <div className="space-y-3 mt-5">
-            {cartData?.slice(0, 2)?.map((item, index) => (
+            {cartState?.map((item, index) => (
               <CheckoutCard key={index} item={item} />
             ))}
           </div>
@@ -84,7 +78,10 @@ const Checkout = () => {
           </div>
         </div>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className=" w-full lg:w-2/3 space-y-4 border border-black/60 p-5 ">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className=" w-full lg:w-2/3 space-y-4 border border-black/60 p-5 "
+      >
         <h2 className="text-xl font-semibold">Billing Information</h2>
 
         <div className="flex-1">
@@ -96,7 +93,7 @@ const Checkout = () => {
             id="first_name"
             type="text"
             className="input mt-2 focus:outline-0 w-full focus:border-2 focus:border-primary  input-border"
-            {...register("first_name" , { required: true })} 
+            {...register("first_name", { required: true })}
           />
         </div>
         <div className="flex-1">
@@ -106,7 +103,7 @@ const Checkout = () => {
             id="last_name"
             type="text"
             className="input mt-2 focus:outline-0 w-full focus:border-2 focus:border-primary  input-border"
-             {...register("last_name")} 
+            {...register("last_name")}
           />
         </div>
 
@@ -119,7 +116,7 @@ const Checkout = () => {
             id="address"
             type="text"
             className="input mt-2 focus:outline-0 w-full  focus:border-2 focus:border-primary  input-border"
-             {...register("address")} 
+            {...register("address")}
           />
         </div>
         <div className="flex-1">
@@ -129,7 +126,7 @@ const Checkout = () => {
             id="city"
             type="text"
             className="input mt-2 focus:outline-0 w-full focus:border-2 focus:border-primary  input-border"
-             {...register("city")} 
+            {...register("city")}
           />
         </div>
         <div className="flex-1">
@@ -139,7 +136,7 @@ const Checkout = () => {
             id="postCode"
             type="text"
             className="input mt-2 focus:outline-0 w-full focus:border-2 focus:border-primary  input-border"
-             {...register("post_code")} 
+            {...register("post_code")}
           />
         </div>
         <div className="flex-1">
@@ -149,12 +146,15 @@ const Checkout = () => {
             id="country"
             type="text"
             className="input mt-2 focus:outline-0 w-full focus:border-2 focus:border-primary  input-border"
-             {...register("country")} 
+            {...register("country")}
           />
         </div>
 
         <div className="flex justify-end mt-8">
-          <button type="submit" className="btn ml-auto btn-primary bg-primary  text-white">
+          <button
+            type="submit"
+            className="btn ml-auto btn-primary bg-primary  text-white"
+          >
             Place Order
           </button>
         </div>

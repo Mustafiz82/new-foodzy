@@ -9,10 +9,12 @@ import useFetch from "../../hook/useFetch";
 import { useNavigate, useParams } from "react-router";
 import axiosPublic from "../../config/axiosPublic";
 import Swal from "sweetalert2";
+import { CartContext } from "../../context/CartContext";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const { data: productDetail, refetch } = useFetch(`product/${id}`);
+  const { refetch: cartRefetch } = useContext(CartContext);
   const [selectedImage, setSelectedImage] = useState(
     productDetail?.imageUrls?.[0]
   );
@@ -44,9 +46,18 @@ const ProductDetail = () => {
       console.log(rest);
 
       axiosPublic
-        .post("/cart", { quantity, productID : _id, email: user.email })
+        .post("/cart", { quantity, productID: _id, email: user.email })
         .then((res) => {
           // if(res.data)
+
+          if (res.data.error) {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: res.data.error,
+              footer: '<a href="/cart">view Cart</a>',
+            });
+          }
           if (res.data.insertedId) {
             Swal.fire({
               title: "Success",
@@ -54,6 +65,8 @@ const ProductDetail = () => {
               icon: "success",
               footer: '<a href="/cart">view Cart</a>',
             });
+
+            cartRefetch();
           }
         });
     } else {
