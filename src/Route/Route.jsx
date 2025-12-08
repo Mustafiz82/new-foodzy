@@ -19,6 +19,8 @@ import ManageProduct from "../components/Admin/manageProducts/ManageProduct";
 import ManageCategories from "../components/Admin/manage-category/ManageCategories";
 import AddProduct from "../components/Admin/add-product/AddProduct";
 import EditProduct from "../components/Admin/add-product/EditProduct";
+import SuccessPage from "../components/Success/Success";
+import MyOrder from "../components/MYOrder.jsx/MyOrder";
 
 const router = createBrowserRouter([
   {
@@ -77,6 +79,10 @@ const router = createBrowserRouter([
         path: "/user",
         element: <Profile />,
       },
+      {
+        path: "my-order",
+        element: <MyOrder />,
+      },
     ],
   },
   {
@@ -106,6 +112,10 @@ const router = createBrowserRouter([
       }
     ],
   },
+  {
+    path: "/success",
+    element : <SuccessPage/>
+  }
 ]);
 
 export default router;

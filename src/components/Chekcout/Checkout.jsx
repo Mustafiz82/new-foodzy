@@ -5,10 +5,16 @@ import useFetch from "../../hook/useFetch";
 import { AuthContext } from "../../context/Authcontext";
 import { useForm } from "react-hook-form";
 import { CartContext } from "../../context/CartContext";
+import axiosPublic from "../../config/axiosPublic";
+import { useNavigate } from "react-router";
 
 const Checkout = () => {
+  const { cartState } = useContext(CartContext);
+  const [selectedPaymentMethod, setSlectedPaymentMethod] = useState("COD");
+  const navigate = useNavigate()
+  const {user} = useContext(AuthContext)
 
-  const { cartState, } = useContext(CartContext);
+  console.log(cartState);
 
   const {
     register,
@@ -16,7 +22,16 @@ const Checkout = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => {
+
+    const payload = {...data , cartData : cartState , email : user.email}
+    if (selectedPaymentMethod == "stripe"){
+      axiosPublic.post("/create-checkout-session" , payload)
+      .then(res => {
+        window.location.href = res.data.url
+      })
+    }
+  };
 
   return (
     <div className="flex flex-col  lg:flex-row container mx-auto p-5 w-full gap-5">
@@ -52,6 +67,7 @@ const Checkout = () => {
           <div className="mt-5">
             <input
               type="radio"
+              onChange={() => setSlectedPaymentMethod("COD")}
               name="radio-10"
               className="radio mr-2 radio-error"
               defaultChecked
@@ -61,18 +77,18 @@ const Checkout = () => {
           <div>
             <input
               type="radio"
+              onChange={() => setSlectedPaymentMethod("stripe")}
               name="radio-10"
               className="radio mr-2 mt-2 radio-error"
-              defaultChecked
             />{" "}
             Payment with Stripe
           </div>
           <div className="flex">
             <input
               type="radio"
+                onChange={() => setSlectedPaymentMethod("ssl")}
               name="radio-10"
               className="radio mr-2 mt-2 radio-error"
-              defaultChecked
             />{" "}
             Payment with SSLCOMMERZ
           </div>

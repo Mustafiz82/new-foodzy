@@ -3,7 +3,7 @@ import Title from "../Shared/Title";
 import CartItem from "./CartItem";
 import ProductCard from "../Shared/ProductCard";
 import useFetch from "../../hook/useFetch";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../../context/Authcontext";
 import { CartContext } from "../../context/CartContext";
 import { MdDelete } from "react-icons/md";
