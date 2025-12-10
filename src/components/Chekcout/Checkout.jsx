@@ -1,18 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ProductData } from "../../Data/PopularProductData";
+import  { useContext,  useState } from "react";
 import CheckoutCard from "./CheckoutCard";
-import useFetch from "../../hook/useFetch";
 import { AuthContext } from "../../context/Authcontext";
 import { useForm } from "react-hook-form";
 import { CartContext } from "../../context/CartContext";
 import axiosPublic from "../../config/axiosPublic";
-import { useNavigate } from "react-router";
 
 const Checkout = () => {
   const { cartState } = useContext(CartContext);
   const [selectedPaymentMethod, setSlectedPaymentMethod] = useState("COD");
-  const navigate = useNavigate()
-  const {user} = useContext(AuthContext)
+  const { user } = useContext(AuthContext);
 
   console.log(cartState);
 
@@ -23,14 +19,20 @@ const Checkout = () => {
   } = useForm();
 
   const onSubmit = (data) => {
+    const payload = {
+      ...data,
+      cartData: cartState,
+      email: user.email,
+      paymentMethod: selectedPaymentMethod,
+    };
 
-    const payload = {...data , cartData : cartState , email : user.email}
-    if (selectedPaymentMethod == "stripe"){
-      axiosPublic.post("/create-checkout-session" , payload)
-      .then(res => {
-        window.location.href = res.data.url
-      })
-    }
+    axiosPublic.post("/order", payload).then((res) => {
+     if(res.data.url){
+      window.location.href = res.data.url;
+     }
+    });
+
+    
   };
 
   return (
@@ -86,7 +88,7 @@ const Checkout = () => {
           <div className="flex">
             <input
               type="radio"
-                onChange={() => setSlectedPaymentMethod("ssl")}
+              onChange={() => setSlectedPaymentMethod("ssl")}
               name="radio-10"
               className="radio mr-2 mt-2 radio-error"
             />{" "}
