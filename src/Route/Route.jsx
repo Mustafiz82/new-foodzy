@@ -21,6 +21,8 @@ import AddProduct from "../components/Admin/add-product/AddProduct";
 import EditProduct from "../components/Admin/add-product/EditProduct";
 import SuccessPage from "../components/Success/Success";
 import MyOrder from "../components/MYOrder.jsx/MyOrder";
+import ManageOrder from "../components/Admin/Manage-Order/ManageOrder";
+import OrderDetails from "../components/Admin/OrderDetails/OrderDetails";
 
 const router = createBrowserRouter([
   {
@@ -109,6 +111,14 @@ const router = createBrowserRouter([
       {
         path : "/admin/manage-categories",
         element : <ManageCategories/>
+      },
+      {
+        path : "/admin/manage-orders",
+        element : <ManageOrder/>
+      },
+      {
+        path : "/admin/manage-orders/:id",
+        element : <OrderDetails/>
       }
     ],
   },

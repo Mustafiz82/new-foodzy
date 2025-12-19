@@ -69,7 +69,7 @@ const Nav = () => {
         <ul className="flex  gap-5">
           {user?.email ? (
             <>
-              <Link to={"/user"}>
+              <Link to={"/user/my-order"}>
                 <li className="flex items-center gap-2">
                   <MdOutlineAccountCircle /> Account{" "}
                 </li>
