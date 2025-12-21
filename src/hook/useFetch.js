@@ -1,5 +1,6 @@
-import axios from "axios";
+
 import { useEffect, useState } from "react";
+import axiosPublic from "../config/axiosPublic";
 
 const useFetch = (endpoint) => {
   const [data, setData] = useState([]);
@@ -12,8 +13,8 @@ const useFetch = (endpoint) => {
   }
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:3000/${endpoint}`)
+   axiosPublic
+      .get(`/${endpoint}`)
       .then((res) => {
         setData(res.data);
         setLoading(false);

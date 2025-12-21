@@ -1,9 +1,9 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Title from "../Shared/Title";
 import CartItem from "./CartItem";
 import ProductCard from "../Shared/ProductCard";
 import useFetch from "../../hook/useFetch";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../../context/Authcontext";
 import { CartContext } from "../../context/CartContext";
 import { MdDelete } from "react-icons/md";
@@ -12,8 +12,21 @@ import Swal from "sweetalert2";
 const Cart = () => {
 
   const { data: ProductData } = useFetch("product");
+  // const navigate = useNavigate()
 
-  const { cartState, refetch, handleUpdateQuantity } = useContext(CartContext);
+  const { cartState, refetch, handleUpdateQuantity , error } = useContext(CartContext);
+  const {user} = useContext(AuthContext)
+
+  // console.log(error);
+
+
+  // useEffect(() => {
+  //   if(user && error){
+  //     navigate("/login")
+  //   }
+  // } , [user])
+
+
 
   const handleDeleteAll = () => {
     try {
@@ -47,6 +60,8 @@ const Cart = () => {
 
   return (
     <div className="container mx-auto p-5 ">
+
+
       <div className="overflow-x-auto ">
         <table className="table  table-pin-rows min-w-[700px] bg-[#F7F7F8]">
           {/* head */}

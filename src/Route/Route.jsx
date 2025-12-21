@@ -23,6 +23,8 @@ import SuccessPage from "../components/Success/Success";
 import MyOrder from "../components/MYOrder.jsx/MyOrder";
 import ManageOrder from "../components/Admin/Manage-Order/ManageOrder";
 import OrderDetails from "../components/Admin/OrderDetails/OrderDetails";
+import PriveteRoute from "./Private";
+import ManageUser from "../components/Admin/manage-user/ManageUser";
 
 const router = createBrowserRouter([
   {
@@ -52,7 +54,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/cart",
-        element: <Cart />,
+        element: <PriveteRoute> <Cart /></PriveteRoute> ,
       },
       {
         path: "/wishlist",
@@ -74,7 +76,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/user",
-    element: <UserLayout />,
+    element: <PriveteRoute> <UserLayout /> </PriveteRoute>,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -119,7 +121,11 @@ const router = createBrowserRouter([
       {
         path : "/admin/manage-orders/:id",
         element : <OrderDetails/>
-      }
+      },
+      {
+        path : "/admin/manage-user",
+        element : <ManageUser/>
+      },
     ],
   },
   {

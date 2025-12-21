@@ -31,7 +31,7 @@ const MyOrder = () => {
                         </div>
 
                         <div>
-                            <p className='bg-gray-200 p-2  px-5 rounded-full'>{item?.paymentStatus} </p>
+                            <p className='bg-gray-200 p-2  px-5 rounded-full'>{item?.orderStatus} </p>
                         </div>
                     </div>
 

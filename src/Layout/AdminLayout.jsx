@@ -37,6 +37,9 @@ const AdminLayout = () => {
            <Link to={"/admin/manage-orders"} >Manage Orders</Link>
           </li>
           <li>
+           <Link to={"/admin/manage-user"} >Manage User</Link>
+          </li>
+          <li>
             <a>Sidebar Item 2</a>
           </li>
           <button onClick={signOutUser} className="mt-auto">

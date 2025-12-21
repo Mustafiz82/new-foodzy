@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router';
 import useFetch from '../../../hook/useFetch';
 
+import axiosPublic from '../../../config/axiosPublic';
+
 const OrderDetails = () => {
 
     const { id } = useParams()
@@ -10,6 +12,15 @@ const OrderDetails = () => {
     useEffect(() => {
         refetch()
     }, [id])
+
+
+    const handleClick = () => {
+        axiosPublic.patch(`/order/${id}`)
+        .then(res => {
+            console.log(res.data)
+            refetch()
+        })
+    }
 
     console.log(data);
     return (
@@ -53,7 +64,8 @@ const OrderDetails = () => {
                 </div>
 
 
-                <div className='grid mt-10 grid-cols-[150px_1fr]'>
+               <div>
+                 <div className='grid mt-10 grid-cols-[150px_1fr]'>
                         <p className='font-semibold'>First Name : </p>
                         <span>{data.first_name}</span>
                         <p className='font-semibold'>Last Name : </p>
@@ -72,11 +84,19 @@ const OrderDetails = () => {
                         <span>{data.paymentMethod}</span>
                         <p className='font-semibold'>Payment Status : </p>
                         <span>{data.paymentStatus}</span>
+                        <p className='font-semibold'>Order Status : </p>
+                        <span>{data.orderStatus}</span>
                         <p className='font-semibold'>Order ID : </p>
                         <span>{data._id}</span>
                         <p className='font-semibold'>Order Date : </p>
-                        <span>{new Date(data?.orderDate).toLocaleDateString()}</span>
+                        <span>{new Date(data?.orderDate).toLocaleDateString(.0)}</span>
                 </div>
+
+                <button onClick={handleClick} className='btn mt-5 text-white btn-primary'>Mark As Delivered</button>
+               </div>
+
+
+                
             </div>
 
 

@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 const ManageOrder = () => {
 
 
-    const {data , loading } = useFetch("all-orders")
+    const {data  } = useFetch("all-orders")
 
     console.log(data);
 
@@ -32,6 +32,7 @@ const ManageOrder = () => {
                             <th>Customer email</th>
                             <th>Product count</th>
                             <th>Total Price </th>
+                            <th>Order Status </th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -47,6 +48,7 @@ const ManageOrder = () => {
                             <td>{item.email}</td>
                             <td>{item.products.length}</td>
                             <td>${calculateTotalPrice(item.products)}</td>
+                            <td>{item.orderStatus}</td>
                             <td><Link to={`${item._id}`} className='btn btn-primary'>View Details</Link></td>
                         </tr>)
                         }

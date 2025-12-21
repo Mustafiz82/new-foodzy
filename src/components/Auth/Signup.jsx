@@ -10,13 +10,14 @@ import { FaGithub } from "react-icons/fa";
 import { updateProfile } from "firebase/auth";
 import { auth } from "../../../firebase.config";
 import axios from "axios";
+import axiosPublic from "../../config/axiosPublic";
 
 const Signup = () => {
   const [error, setError] = useState(null);
   const [showPasword, setShowPassword] = useState(false);
   const [confirmPasword, setConfirmPassword] = useState(false);
 
-  const { createUser, signInWithGoogle , signInWithGithub} = useContext(AuthContext);
+  const { createUser, signInWithGoogle, signInWithGithub } = useContext(AuthContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -49,21 +50,24 @@ const Signup = () => {
     createUser(email, password)
       .then((res) => {
         console.log(res.user);
-        if(res?.user?.email){
-          updateProfile(auth.currentUser , {
-            displayName : name
+        if (res?.user?.email) {
+          updateProfile(auth.currentUser, {
+            displayName: name
           })
-          .then(() => {
-            console.log(res);
-            const user = {
-              name : res.user.displayName,
-              email : res.user.email
-            }
+            .then(() => {
+              console.log(res);
+              const user = {
+                name: res.user.displayName,
+                email: res.user.email
+              }
 
-            console.log(user);
-            axios.post("http://localhost:3000/user" , user)
-            .then(res => res.data)
-          })
+              console.log(user);
+              axios.post("http://localhost:3000/user", user)
+                .then(() => {
+                  axiosPublic.post("/jwt", { email: res.user.email })
+                    .then(res => console.log(res.data))
+                })
+            })
         }
       })
       .catch((err) => console.log(err));
@@ -73,7 +77,25 @@ const Signup = () => {
 
   const handleGoogleSignin = () => {
     signInWithGoogle()
-      .then((res) => console.log(res.user))
+      .then((res) => {
+
+        console.log(res.user);
+
+        axiosPublic.post("/jwt", { email: res.user.email })
+          .then(res => console.log(res.data))
+
+
+
+        const user = {
+          name: res.user.displayName,
+          email: res.user.email,
+
+        }
+
+        axiosPublic.post("/user", user)
+          .then(() => {
+          })
+      })
       .catch((err) => console.log(err));
   };
 

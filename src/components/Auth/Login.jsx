@@ -6,11 +6,12 @@ import { IoIosEye, IoMdEyeOff } from "react-icons/io";
 import { AuthContext } from "../../context/Authcontext";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import axiosPublic from "../../config/axiosPublic";
 
 const Login = () => {
   const [showPasword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const { loginUser , signInWithGithub , signInWithGoogle } = useContext(AuthContext);
+  const { loginUser, signInWithGithub, signInWithGoogle } = useContext(AuthContext);
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -24,7 +25,10 @@ const Login = () => {
     setError("");
 
     loginUser(email, password)
-      .then((user) => console.log(user))
+      .then((user) => {
+        axiosPublic.post("/jwt", { email: user.user.email })
+          .then(res => console.log(res.data))
+      })
       .catch((err) => console.log(err));
 
     console.log({ email, password });
@@ -32,13 +36,22 @@ const Login = () => {
 
   const handleGoogleSignin = () => {
     signInWithGoogle()
-      .then((res) => console.log(res.user))
+      .then((res) => {
+
+        console.log(res.user.email);
+        axiosPublic.post("/jwt", { email: res.user.email })
+          .then(res => console.log(res.data))
+      })
       .catch((err) => console.log(err));
   };
 
   const handleGithubSignin = () => {
     signInWithGithub()
-      .then((res) => console.log(res.user))
+      .then((res) => {
+        axiosPublic.post("/jwt", { email: res.user.email })
+          .then(res => console.log(res.data))
+
+      })
       .catch((err) => console.log(err));
   };
 
