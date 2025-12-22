@@ -25,6 +25,7 @@ import ManageOrder from "../components/Admin/Manage-Order/ManageOrder";
 import OrderDetails from "../components/Admin/OrderDetails/OrderDetails";
 import PriveteRoute from "./Private";
 import ManageUser from "../components/Admin/manage-user/ManageUser";
+import Admin from "./Admin";
 
 const router = createBrowserRouter([
   {
@@ -91,7 +92,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <AdminLayout />,
+    element: <Admin> <AdminLayout /></Admin>,
     errorElement: <ErrorPage />,
     children: [
       {

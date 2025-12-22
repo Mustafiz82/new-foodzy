@@ -17,7 +17,16 @@ const Cart = () => {
   const { cartState, refetch, handleUpdateQuantity , error } = useContext(CartContext);
   const {user} = useContext(AuthContext)
 
-  // console.log(error);
+  console.log(error);
+
+
+
+  if(error.includes("NO Token Found")){
+    return <div className="py-20 text-center flex flex-col items-center">
+         Session Expired . Please Login To Continue
+     <Link  to={"/login"} >    <button className="bg-primary btn btn-primary my-4 text-lg text-white">Login</button></Link>
+    </div>
+  }
 
 
   // useEffect(() => {
